@@ -1,0 +1,107 @@
+@if (isLoading) {
+  <div class="flex justify-center items-center h-64">
+    <i class="fa fa-spinner fa-spin text-4xl text-green-600"></i>
+  </div>
+} @else {
+  <section class="max-w-6xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg">
+    <h1 class="text-3xl font-bold text-green-600 mb-6 text-center">🛒 Cart Page</h1>
+
+    @if (cartData?.numOfCartItems) {
+      <p class="text-green-600 font-semibold mb-4 text-lg">
+        Total Price : <span class="text-gray-800">{{ cartData?.data?.totalCartPrice }} EGP</span>
+      </p>
+
+      <div class="relative overflow-x-auto shadow-md rounded-lg">
+        <table class="w-full text-sm text-left text-gray-600">
+          <thead class="text-xs uppercase bg-gray-100 text-gray-700">
+            <tr>
+              <th scope="col" class="px-16 py-3"><span class="sr-only">Image</span></th>
+              <th scope="col" class="px-6 py-3">Product</th>
+              <th scope="col" class="px-6 py-3">Qty</th>
+              <th scope="col" class="px-6 py-3">Price</th>
+              <th scope="col" class="px-6 py-3">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (item of cartData?.data?.products; track $index) {
+              <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="p-4">
+                  <img [src]="item.product.imageCover"
+                       class="w-20 h-20 object-cover rounded-lg border"
+                       [alt]="item.product.title">
+                </td>
+                <td class="px-6 py-4 font-semibold text-gray-900">
+                  {{ item.product.title }}
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <!-- Decrease -->
+                    <button (click)="updateCount(item.product._id, item.count - 1)"
+                      class="inline-flex items-center justify-center p-1 me-3 h-7 w-7 text-gray-500 bg-white border border-gray-300 rounded-full hover:bg-gray-100 focus:ring-2 focus:ring-green-300"
+                      type="button">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 18 2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M1 1h16"/>
+                      </svg>
+                    </button>
+
+                    <!-- Count -->
+                    <span class="font-semibold text-gray-800">{{ item.count }}</span>
+
+                    <!-- Increase -->
+                    <button (click)="updateCount(item.product._id, item.count + 1)"
+                      class="inline-flex items-center justify-center h-7 w-7 p-1 ms-3 text-gray-500 bg-white border border-gray-300 rounded-full hover:bg-gray-100 focus:ring-2 focus:ring-green-300"
+                      type="button">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 18 18">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 1v16M1 9h16"/>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+                <td class="px-6 py-4 font-semibold text-gray-900">
+                  {{ item.price }} EGP
+                </td>
+                <td class="px-6 py-4">
+                  <button (click)="deleteProduct(item.product._id)" class="btn-red">Remove</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-between mt-6">
+        <!-- Clear Cart -->
+        <button
+          (click)="onClearCart()"
+          type="button"
+          class="relative px-6 cursor-pointer py-2 bg-red-500 text-white rounded flex items-center justify-center transition hover:bg-white hover:text-red-600 border border-red-500 disabled:opacity-50"
+          [disabled]="isClearing"
+        >
+          @if (!isClearing) {
+            <span>🗑️ Clear Cart</span>
+          } @else {
+            <i class="fa fa-spinner fa-spin text-red-600 text-lg"></i>
+          }
+        </button>
+
+        <!-- Checkout -->
+        <button
+          (click)="onCheckout()"
+          type="button"
+          class="relative px-6 py-2 cursor-pointer bg-green-500 text-white rounded flex items-center justify-center transition hover:bg-white hover:text-green-600 border border-green-500 disabled:opacity-50"
+          [disabled]="isCheckingOut"
+        >
+          @if (!isCheckingOut) {
+            <span>💳 Checkout</span>
+          } @else {
+            <i class="fa fa-spinner fa-spin text-green-600 text-lg"></i>
+          }
+        </button>
+      </div>
+    } @else {
+      <p class="text-red-500 text-center text-lg font-medium">No Items in Cart</p>
+    }
+  </section>
+}
