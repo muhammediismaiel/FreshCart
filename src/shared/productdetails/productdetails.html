@@ -1,0 +1,38 @@
+<section class="max-w-screen-xl mx-auto p-6">
+  @if (isLoading) {
+    <div class="flex justify-center items-center h-80">
+      <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  } @else {
+    @if (product) {
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-xl shadow-lg p-6">
+        <div class="flex justify-center">
+          <owl-carousel-o [options]="customOptions" class="w-80">
+            @for (img of product.images; track $index) {
+              <ng-template carouselSlide>
+                <img [src]="img" alt="Product Image" class="w-80 h-80 object-cover rounded-lg shadow-md" />
+              </ng-template>
+            }
+          </owl-carousel-o>
+        </div>
+
+        <div>
+          <h1 class="text-3xl font-bold text-green-600">{{ product.title }}</h1>
+          <p class="text-gray-700 mt-4">{{ product.description }}</p>
+          <div class="mt-6">
+            <span class="text-2xl font-semibold text-gray-900">
+              {{ product.price | currency }}
+            </span>
+          </div>
+          <button
+            class="mt-6 cursor-pointer bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
+          >
+            🛒 Add to Cart
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="text-center text-red-600 font-semibold">Product not found</p>
+    }
+  }
+</section>
