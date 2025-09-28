@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-reset-password',
@@ -12,6 +13,10 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class Resetpassword {
   step = 1;
+
+  isLoadingForget = false;
+  isLoadingVerify = false;
+  isLoadingReset = false;
 
   private toaster = inject(ToastrService);
   private authService = inject(AuthService);
@@ -35,13 +40,15 @@ export class Resetpassword {
       this.forgetPasswordGroup.markAllAsTouched();
       return;
     }
-    this.forgetPasswordGroup.value.email;
+
+    this.isLoadingForget = true;
     this.resetPasswordGroup.get('email')?.patchValue(this.forgetPasswordGroup.value.email || '');
+
     this.authService
       .forgetPassword({ email: this.forgetPasswordGroup.value.email! })
-
+      .pipe(finalize(() => (this.isLoadingForget = false)))
       .subscribe({
-        next: (res) => {
+        next: () => {
           this.step = 2;
         },
         error: (err) => {
@@ -56,10 +63,12 @@ export class Resetpassword {
       return;
     }
 
+    this.isLoadingVerify = true;
     this.authService
       .verifyCode({ resetCode: this.verifyResetCodeGroup.value.resetCode! })
+      .pipe(finalize(() => (this.isLoadingVerify = false)))
       .subscribe({
-        next: (res) => {
+        next: () => {
           this.step = 3;
         },
         error: (err) => {
@@ -73,15 +82,17 @@ export class Resetpassword {
       this.resetPasswordGroup.markAllAsTouched();
       return;
     }
+
+    this.isLoadingReset = true;
     this.authService
       .resetPassword({
         email: this.resetPasswordGroup.value.email!,
         newPassword: this.resetPasswordGroup.value.newPassword!,
       })
+      .pipe(finalize(() => (this.isLoadingReset = false)))
       .subscribe({
         next: (res) => {
           this.toaster.success('Password Reset Successfully', '', { timeOut: 1500 });
-          // localStorage.setItem('token', res.token);
           this.authService.decodeToken(res.token);
           this.router.navigate(['/login']);
         },
