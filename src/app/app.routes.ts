@@ -12,5 +12,6 @@ export const routes: Routes =
   { path: 'about', loadComponent: () => import('../shared/about/about').then(m => m.About) },
   { path: 'productdetails/:id', canActivate: [authGuard], loadComponent: () => import('../shared/productdetails/productdetails').then(m => m.ProductDetails) },
   { path: 'category/:id', canActivate: [authGuard], loadComponent: () => import('../shared/category-products/category-products').then(m => m.CategoryProductsComponent) },
+  { path: 'reset-password', loadComponent: () => import('./pages/resetpassword/resetpassword').then(m => m.Resetpassword) },
   { path: '**', loadComponent: () => import('../shared/notfound/notfound').then(m => m.Notfound) }
 ];
